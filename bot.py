@@ -103,7 +103,13 @@ class TicketCategoryView(ui.View):
         super().__init__()
         self.add_item(TicketCategoryDropdown())
 
+class CreateTicketButton(ui.View):
+    def __init__(self):
+        super().__init__()
 
+    @ui.button(label="Create Ticket", style=discord.ButtonStyle.green, custom_id="create_ticket_button_unique")
+    async def create_ticket(self, button: ui.Button, interaction: Interaction):
+        await interaction.response.send_message("Select ticket category:", view=TicketCategoryView(), ephemeral=True)
 
 # ------------------- TICKET TASKS -------------------
 async def ticket_idle_checker(channel):
@@ -122,13 +128,7 @@ async def ticket_escalation_checker(channel):
 
 async def generate_transcript(channel):
     messages = [m async for m in channel.history(limit=None, oldest_first=True)]
- class CreateTicketButton(ui.View):
-    def __init__(self):
-        super().__init__()
-
-    @ui.button(label="Create Ticket", style=discord.ButtonStyle.green, custom_id="create_ticket")
-    async def create_ticket(self, button: ui.Button, interaction: Interaction):
-        await interaction.response.send_message("Select ticket category:", view=TicketCategoryView(), ephemeral=True)   transcript = "\n".join([f"{m.author}: {m.content}" for m in messages])
+    transcript = "\n".join([f"{m.author}: {m.content}" for m in messages])
     log_channel = channel.guild.get_channel(TICKET_LOG_CHANNEL_ID)
     if log_channel:
         await log_channel.send(f"Transcript for {channel.name}:\n```{transcript}```")
@@ -257,7 +257,7 @@ async def dashboard(interaction: Interaction):
     embed.add_field(name="Closed Tickets", value=str(total_closed))
     embed.add_field(name="Average Response Time", value=f"{avg_response:.2f} minutes")
     embed.add_field(name="Feedback Stats", value=f"👍 {feedback_counts['satisfied']} | 👎 {feedback_counts['unsatisfied']}")
-    embed.add_field(name="Closed Tickets per Mod", value="\n".join([f"<@{mid}>: {cnt}" for mid,cnt in closed_by_mod.items()]) or "None")
+    embed.add_field(name="Closed Tickets per Mod", value="\n".join([f"<@{mid}>: {cnt}" for mid, cnt in closed_by_mod.items()]) or "None")
     embed.add_field(name="Points Leaderboard", value=lb_text, inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
