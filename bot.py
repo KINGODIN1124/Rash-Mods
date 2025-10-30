@@ -1,6 +1,6 @@
 import os
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord import app_commands, ui, Interaction
 import asyncio
 import datetime
@@ -31,8 +31,8 @@ intents.guilds = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # ------------------- DATA STORAGE -------------------
-tickets_data = {}  # {channel_id: ticket_info}
-user_points = {}   # {user_id: points}
+tickets_data = {}       # {channel_id: ticket_info}
+user_points = {}        # {user_id: points}
 user_ticket_count = {}  # {user_id: total tickets created}
 
 # ------------------- FLASK KEEP-ALIVE -------------------
@@ -73,7 +73,9 @@ class TicketCategoryDropdown(ui.Select):
             overwrites[mod_role] = discord.PermissionOverwrite(read_messages=True, send_messages=True)
 
         # Create ticket channel with format: ticket-username-number
-        channel_name = f"ticket-{interaction.user.name.lower()}-{ticket_number}"
+        username_safe = "".join(e for e in interaction.user.name if e.isalnum()).lower()
+        channel_name = f"ticket-{username_safe}-{ticket_number}"
+
         channel = await guild.create_text_channel(
             name=channel_name,
             overwrites=overwrites,
@@ -261,4 +263,8 @@ async def dashboard(interaction: Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 # ------------------- RUN BOT -------------------
-bot.run(os.environ['DISCORD_TOKEN'])
+DISCORD_TOKEN = os.environ.get('DISCORD_TOKEN')
+if not DISCORD_TOKEN:
+    print("Error: DISCORD_TOKEN not found in environment variables.")
+else:
+    bot.run(DISCORD_TOKEN)
