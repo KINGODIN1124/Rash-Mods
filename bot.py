@@ -1,3 +1,4 @@
+import os
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands, ui
@@ -267,4 +268,4 @@ async def ticket(ctx):
     await ctx.send("Click the button below to create a ticket:", view=view)
 
 # ----- Run Bot -----
-bot.run("MTQzMjQ1MDc0NDQwNTE5Njg3Mw.GKLGKp.5mNt7l2krR5pJvXND-Tnzio_4HyL2VTiKCQJwk")
+bot.run(os.environ['DISCORD_TOKEN'])
