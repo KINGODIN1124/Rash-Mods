@@ -1,4 +1,4 @@
-import os
+1import os
 import discord
 from discord.ext import commands
 from discord import app_commands, ui, Interaction
@@ -103,14 +103,7 @@ class TicketCategoryView(ui.View):
         super().__init__()
         self.add_item(TicketCategoryDropdown())
 
-class CreateTicketButton(ui.View):
-    def __init__(self):
-        super().__init__()
-        self.add_item(ui.Button(label="Create Ticket", style=discord.ButtonStyle.green, custom_id="create_ticket"))
 
-    @ui.button(label="Create Ticket", style=discord.ButtonStyle.green, custom_id="create_ticket")
-    async def create_ticket(self, button: ui.Button, interaction: Interaction):
-        await interaction.response.send_message("Select ticket category:", view=TicketCategoryView(), ephemeral=True)
 
 # ------------------- TICKET TASKS -------------------
 async def ticket_idle_checker(channel):
@@ -129,7 +122,13 @@ async def ticket_escalation_checker(channel):
 
 async def generate_transcript(channel):
     messages = [m async for m in channel.history(limit=None, oldest_first=True)]
-    transcript = "\n".join([f"{m.author}: {m.content}" for m in messages])
+ class CreateTicketButton(ui.View):
+    def __init__(self):
+        super().__init__()
+
+    @ui.button(label="Create Ticket", style=discord.ButtonStyle.green, custom_id="create_ticket")
+    async def create_ticket(self, button: ui.Button, interaction: Interaction):
+        await interaction.response.send_message("Select ticket category:", view=TicketCategoryView(), ephemeral=True)   transcript = "\n".join([f"{m.author}: {m.content}" for m in messages])
     log_channel = channel.guild.get_channel(TICKET_LOG_CHANNEL_ID)
     if log_channel:
         await log_channel.send(f"Transcript for {channel.name}:\n```{transcript}```")
