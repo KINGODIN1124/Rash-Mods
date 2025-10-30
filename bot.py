@@ -267,4 +267,4 @@ async def ticket(ctx):
     await ctx.send("Click the button below to create a ticket:", view=view)
 
 # ----- Run Bot -----
-bot.run("YOUR_BOT_TOKEN")
+bot.run("MTQzMjQ1MDc0NDQwNTE5Njg3Mw.GKLGKp.5mNt7l2krR5pJvXND-Tnzio_4HyL2VTiKCQJwk")
